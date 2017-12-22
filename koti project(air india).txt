@@ -1,0 +1,165 @@
+Appendix A – Source Code
+
+CODE FOR COVER TEXT:
+
+import java.io.* ; 
+public class writefile
+{
+String name ;
+String textline ; 
+public writefile(String name1 , String data)
+{
+name = name1 ; 
+textline = data ; 0
+}
+public void writeTofile() throws IOException
+{
+FileWriter write = new FileWriter(name);
+PrintWriter print_line = new PrintWriter(write);
+print_line.printf("%s" +"%n"  , textline);
+print_line.close(); 
+}
+}
+
+
+
+
+
+CODE FOR ENCRYPTION:
+
+import javax.swing.JOptionPane;
+import java.io.*;
+import java.io.Console;
+class sender{
+public static void main(String ... ar) throws Exception
+{
+Console c=System.console();
+String key,ctext;
+System.out.println("\t\t************************************************************");
+System.out.println("\t\t\t\tTEXT STEGANOGRAPHY");
+System.out.println("\t\t************************************************************");
+System.out.println("ENCRYPTION DETAILS:\n\n");
+ctext=c.readLine("ENTER COVER TEXT:");
+key=c.readLine("\n\n\n\n\nENTER KEY:");
+writefile wf=new writefile("cover.txt",ctext);
+wf.writeTofile();
+System.out.println("\n\n\t\t************************************************************");
+System.out.println("\n\nFILE HAS BEEN GENERATED!!!");
+System.out.println("\nKEY IS :"+key);
+
+}
+}
+
+
+
+
+CODE FOR DECRYPTION:
+
+import java.io.* ;
+import java.io.Console ; 
+public class Decrypter
+{
+public static void main(String [] ar) throws Exception
+{
+Console input = System.console();
+System.out.println("\n\nDECRYPTION DETAILS:\n\n");
+String key = input.readLine("\nPLEASE ENTER THE KEY IN ORDER TO GET THE CODE:\n\n\n ");
+receiver obj = new receiver("cover.txt" ,  key);
+obj.decode();
+}
+} 
+class receiver
+{
+String name ;
+String key ;
+
+ /* ------------------------ Constructor definition -------------------------------- */
+
+public receiver(String name1 ,  String key1)
+{
+name = name1 ; 
+key = key1 ; 
+}
+
+ /* ------------------------- Decoding Code ---------------------------- */
+
+public void decode() throws IOException 
+{
+File f = new File(name);
+FileInputStream fis = new FileInputStream(f);
+int data ; 
+int words = 0 ; 
+int k = 0 ; 
+char []ch = new char[100] ; 
+char []keyArr =  key.toCharArray();
+
+ /* ------------------- Reading File Contents ------------------------ */
+
+while(true)
+{
+data = fis.read();
+ch[k] = (char)data;
+k++ ;   
+if(data == -1)
+break;
+}
+
+/* ------------------- End of file reading ------------------------ */
+
+char []ch2  = new char[k] ; 
+for(int i = 0 ; i<k-1 ; i++)
+ch2[i]  =  ch[i] ; 
+String fullmessage = new String(ch2)  ;
+fullmessage = fullmessage.trim() ; 
+
+
+/* ------------- Calculation of number of words in the cover text----------- */ 
+
+for(int i = 0 ; i<k ;  i++)
+{
+if((int)ch[i] == 32)
+words++ ;
+else 
+continue; 
+}
+if(words+1 < keyArr.length)
+{
+System.out.println("Key length is greater than the cover text words");
+System.exit(0);
+}
+int l = 0 ;
+int p = 0;
+int m ; 
+String []hiddenMsg  = new String[words+1] ;
+
+/* ------------------ Extracting subtrings from the main cover text string -------------------- */
+
+for(m =0 ; m<fullmessage.length() ; m++)
+{
+if(fullmessage.charAt(m) == ' ')
+{
+hiddenMsg[p] = fullmessage.substring(l , m);
+l = m+1 ; 
+p++;
+}
+else
+continue;
+}
+hiddenMsg[p] = fullmessage.substring(l , m) ; 
+char []code = new char[keyArr.length] ; 
+System.out.println("/************** YOUR CODE ****************/\n");
+System.out.print("           ");
+for(int i = 0 ; i <keyArr.length ; i++)
+{
+int z = (int)keyArr[i] - 49 ; 
+if(hiddenMsg[i].length() < z+1)
+continue;
+else{
+code[i] = hiddenMsg[i].charAt(z)  ; 
+System.out.print(code[i]);
+}
+}
+System.out.println();
+}
+
+}
